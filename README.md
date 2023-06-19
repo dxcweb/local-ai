@@ -25,6 +25,12 @@ https://user-images.githubusercontent.com/21973553/244636857-06572f8b-a1d6-4457-
 https://user-images.githubusercontent.com/21973553/244636422-5c741b97-6fd8-436a-bc8b-99c4fb113ea0.mp4
 
 
+## Rembg
+
+批量去除图片背景
+
+![localai.png](https://b3logfile.com/file/2023/06/local-ai-49qgYMz.png)
+
 ## 给我买杯咖啡
 
 嗨，如果你觉得我的项目有用，请考虑给我买杯咖啡来支持我的工作。谢谢
