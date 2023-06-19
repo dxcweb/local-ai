@@ -4,8 +4,16 @@
 const { contextBridge, ipcRenderer } = require("electron");
 
 const onListener = (eventName) => {
-  return (callback) => {
-    ipcRenderer.send(eventName);
+  return (...option) => {
+    let params = null;
+    let callback = null;
+    if (option.length === 1) {
+      callback = option[0];
+    } else {
+      params = option[0];
+      callback = option[1];
+    }
+    ipcRenderer.send(eventName, params);
     function handleEvent(event, data) {
       callback(data);
     }
@@ -15,7 +23,35 @@ const onListener = (eventName) => {
     };
   };
 };
+const onListenerHandle = (eventName) => {
+  return async (...option) => {
+    let params = null;
+    let callback = null;
+    if (option.length === 1) {
+      callback = option[0];
+    } else {
+      params = option[0];
+      callback = option[1];
+    }
+
+    function handleEvent(event, data) {
+      callback(data);
+    }
+    ipcRenderer.on(`${eventName}-status`, handleEvent);
+    await ipcRenderer.invoke(eventName, params);
+    ipcRenderer.removeListener(`${eventName}-status`, handleEvent);
+  };
+};
 contextBridge.exposeInMainWorld("electronAPI", {
+  selectImage: () => ipcRenderer.invoke("selectImage"),
+  selectImageByFolder: async (callback) => {
+    function handleEvent(event, data) {
+      callback(data);
+    }
+    ipcRenderer.on(`onSelectImage`, handleEvent);
+    await ipcRenderer.invoke("selectImageByFolder");
+    ipcRenderer.removeListener(`onSelectImage`, handleEvent);
+  },
   close: () => ipcRenderer.send("close"),
   setTitle: (title) => {
     ipcRenderer.send("set-title", title);
@@ -26,6 +62,7 @@ contextBridge.exposeInMainWorld("electronAPI", {
     return { xxx: 123 };
   },
   openFile: () => ipcRenderer.invoke("dialog:openFile"),
+
   handleCounter: (callback) => ipcRenderer.on("update-counter", callback),
   // 下载miniconda
   downloadMiniconda: () => ipcRenderer.send("download-miniconda"),
@@ -43,8 +80,12 @@ contextBridge.exposeInMainWorld("electronAPI", {
 
   getVersion: () => ipcRenderer.invoke("get-version"),
   checkUpdate: () => ipcRenderer.invoke("checkUpdate"),
+  getOutPath: () => ipcRenderer.invoke("getOutPath"),
+  selectOutPath: () => ipcRenderer.invoke("selectOutPath"),
   update: onListener("update"),
   startLamaCleaner: onListener("lama-cleaner"),
   startStableDiffusion: onListener("stable-diffusion"),
   SadTalker: onListener("SadTalker"),
+  Rembg: onListener("Rembg"),
+  handleRembg: onListenerHandle("handleRembg"),
 });

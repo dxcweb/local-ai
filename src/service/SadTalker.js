@@ -136,12 +136,8 @@ class SadTalker {
         console.log(3, "pid", this.sd_pid);
       }
     } else {
-      let commandToRun = `export PATH=${this.conda.installPath}bin:$PATH && source activate  ${this.conda.envName} && export PYTORCH_ENABLE_MPS_FALLBACK=1 && cd ${this.pkgPath} && ${command}`;
-      // if (os.cpus()[0].model.indexOf("Intel") >= 0) {
-      //   commandToRun += " --no-half --opt-split-attention-v1 --medvram --use-cpu=all";
-      // } else {
-      //   commandToRun += " --use-cpu=interrogate";
-      // }
+      command=command.replace(/"/g,'\\"')
+      let commandToRun = `export PATH=${this.conda.installPath}bin:$PATH && source activate  ${this.conda.envName}  && cd ${this.pkgPath} && ${command}`;
       const script = `tell application "Terminal" to do script "${commandToRun}"`;
       const child = exec(`osascript -e '${script}'`, { env: { ...process.env } }, () => {});
       this.sd_pid = child.pid;

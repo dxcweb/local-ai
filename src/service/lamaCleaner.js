@@ -3,7 +3,6 @@ const getAvailablePort = require("../utils/getAvailablePort");
 const killChild = require("../utils/killChild");
 const is = require("electron-is");
 const CondaBase = require("./CondaBase");
-const pipInstall = require("../utils/pipInstall");
 const path = require("path");
 const fs = require("fs");
 class LamaCleaner {
@@ -50,7 +49,7 @@ class LamaCleaner {
     return res;
   };
   installLamaCleaner = async (callback) => {
-    await pipInstall(this.conda, "lama-cleaner==1.1.2", callback);
+    await this.conda.pipInstall("lama-cleaner==1.1.2", callback);
   };
 
   runningCallback = (callback) => {
@@ -95,14 +94,13 @@ class LamaCleaner {
       "omegaconf",
       "controlnet-aux==0.0.3",
     ];
-    await pipInstall(this.conda, packages, callback);
+    await this.conda.pipInstall(packages, callback);
   };
   install = async (callback) => {
     await this.conda.install(callback);
-    // await this.pipInstall(callback);
     await this.installLamaCleaner(callback);
     if (is.windows()) {
-      await pipInstall(this.conda, "xformers==0.0.20", callback, "huawei");
+      await this.conda.pipInstall("xformers==0.0.20", callback, "huawei");
     }
   };
   close = async () => {

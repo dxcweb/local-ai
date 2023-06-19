@@ -15,7 +15,6 @@ const is = require("electron-is");
 const treeKill = require("tree-kill");
 const myExecSync = require("../utils/myExecSync");
 const os = require("os");
-const pipInstall = require("../utils/pipInstall");
 class StableDiffusion {
   constructor() {
     this.conda = new CondaBase({
@@ -128,7 +127,7 @@ class StableDiffusion {
     const webui = path.join(this.webuiPath, "requirements.txt");
     await this.conda.exec(`pip install -r ${webui} --prefer-binary`);
     if (is.windows()) {
-      await pipInstall(this.conda, "xformers==0.0.20", callback, "huawei");
+      await this.conda.pipInstall("xformers==0.0.20", callback, "huawei");
     }
     data.finish = true;
     callback(data);

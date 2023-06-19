@@ -7,7 +7,7 @@ const mySpawn = require("../utils/mySpawn");
 const killChild = require("../utils/killChild");
 const aria2c = require("../utils/aria2c");
 const os = require("os");
-const { writeFile } = require("fs/promises");
+const { writeFile, copyFile } = require("fs/promises");
 class CondaBase {
   constructor({ envName, pythonVersion, pytorchVersion, torchvisionVersion, torchaudioVersion, cudaVersion }) {
     this.envName = envName;
@@ -31,16 +31,31 @@ class CondaBase {
     process.env.PATH = this.installPath + (is.windows() ? "condabin;" : "bin:") + process.env.PATH;
     process.env.TORCH_HOME = path.join(this.appPath, "/lib/torch-home/");
     process.env.PIP_INDEX_URL = "https://pypi.mirrors.ustc.edu.cn/simple/";
+    this.setCondarc();
   }
+  setCondarc = async () => {
+    const userDir = os.homedir();
+    const filePath = path.join(userDir, ".condarc");
+    copyFile(path.join(__dirname, ".condarc"), filePath);
+  };
   close = async () => {
     await aria2c.close();
     killChild(this.child);
   };
+  checkInstallPath = () => {
+    if (this.isInstallPath) return true;
+    if (!fs.existsSync(this.installPath)) {
+      throw new Error("未安装conda");
+    }
+    this.isInstallPath = true;
+  };
   exec = (command) => {
+    this.checkInstallPath();
     const condaCommand = is.windows() ? `activate ${this.envName} && ${command}` : `source activate ${this.envName} && ${command}`;
     return myExecSync(condaCommand);
   };
   spawn = (command, options) => {
+    this.checkInstallPath();
     const condaCommand = is.windows() ? `activate ${this.envName} && ${command}` : `source activate ${this.envName} && ${command}`;
     return mySpawn(condaCommand, options);
   };
@@ -172,7 +187,29 @@ class CondaBase {
       callback(data);
     }
   };
+  pipInstall = async (packages, callback, image) => {
+    if (typeof packages === "string") packages = [packages];
 
+    if (image === "aliyun") {
+      process.env.PIP_INDEX_URL = "http://mirrors.aliyun.com/pypi/simple/";
+    } else if (image === "huawei") {
+      process.env.PIP_INDEX_URL = "https://repo.huaweicloud.com/repository/pypi/simple/";
+    } else {
+      process.env.PIP_INDEX_URL = "https://pypi.mirrors.ustc.edu.cn/simple/";
+    }
+
+    for (let i = 0; i < packages.length; i++) {
+      const pkg = packages[i];
+      const data = { id: pkg, name: pkg };
+      callback(data);
+      const res = await this.spawn(`pip install ${pkg}  --prefer-binary`, { log: true });
+      if (res !== 0) {
+        throw new Error(`${pkg} 安装失败`);
+      }
+      data.finish = true;
+      callback(data);
+    }
+  };
   install = async (callback) => {
     const mark = path.join(this.installPath, `${this.envName}.mark`);
     if (fs.existsSync(mark)) {

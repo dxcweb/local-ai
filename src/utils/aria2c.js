@@ -50,6 +50,7 @@ class Aria2c {
   };
 
   _download = (url, params, callback = () => {}) => {
+    const urls = typeof url === "string" ? [url] : url;
     return new Promise(async (resolve, reject) => {
       let errorNum = 0;
       const startDownload = (res) => {
@@ -96,17 +97,21 @@ class Aria2c {
             }
             setTimeout(() => {
               errorNum++;
-              this.send("aria2.addUri", [[url], params])
-                .then(startDownload)
-                .catch(reject);
+              this.addUri(url, params).then(startDownload).catch(reject);
             }, 3000);
           }
         }, 1000);
       };
-      this.send("aria2.addUri", [[url], params])
-        .then(startDownload)
-        .catch(reject);
+
+      this.addUri(url, params).then(startDownload).catch(reject);
     });
+  };
+  addUri = (url, params) => {
+    const urls = typeof url === "string" ? [url] : url;
+    if (!params["user-agent"]) {
+      params["user-agent"] = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36";
+    }
+    return this.send("aria2.addUri", [urls, params]);
   };
   download = async (url, params, callback) => {
     let filePath;

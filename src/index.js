@@ -1,8 +1,8 @@
 const { app, BrowserWindow, Menu, session } = require("electron");
 const path = require("path");
 const service = require("./service/service");
-const sleep = require("./utils/sleep");
 const is = require("electron-is");
+
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require("electron-squirrel-startup")) {
   app.quit();
@@ -27,6 +27,7 @@ const createWindow = () => {
     width: 1500,
     height: 1000,
     webPreferences: {
+      webSecurity: false,
       preload: path.join(__dirname, "preload.js"),
     },
   });
@@ -54,7 +55,7 @@ const createWindow = () => {
   }
   // and load the index.html of the app.
   // mainWindow.loadFile(path.join(__dirname, "web/index.html"));
-  mainWindow.loadURL("https://ai.dxcweb.com/el/?v=1.4.0");
+  mainWindow.loadURL("https://ai.dxcweb.com/el/?v=1.5.0");
   // mainWindow.loadURL("http://localhost:18888");
 
   // Open the DevTools.
