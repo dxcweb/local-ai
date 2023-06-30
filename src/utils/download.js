@@ -33,6 +33,7 @@ const unzip = async ({ out, dir = downloadDir, toDir }, callback) => {
     await deleteFolderRecursive(to);
   }
   const from = path.join(dir, out);
+  console.log(333, from);
   const zip = new AdmZip(from);
   zip.extractAllTo(dir, true);
   const firstFolder = zip.getEntries()[0].entryName.split("/")[0];

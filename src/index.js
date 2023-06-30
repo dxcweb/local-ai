@@ -55,7 +55,7 @@ const createWindow = () => {
   }
   // and load the index.html of the app.
   // mainWindow.loadFile(path.join(__dirname, "web/index.html"));
-  mainWindow.loadURL("https://ai.dxcweb.com/el/?v=1.5.0");
+  mainWindow.loadURL("https://ai.dxcweb.com/el/?v=1.6.0");
   // mainWindow.loadURL("http://localhost:18888");
 
   // Open the DevTools.

@@ -184,11 +184,11 @@ class StableDiffusion {
     const mark = path.join(this.webuiPath, "downloadModels.dxc");
     if (fs.existsSync(mark)) return;
     const dir = path.join(this.webuiDataPath, "models/Stable-diffusion/");
-    const data = { id: "XXMix_9realistic_v3.0.safetensors", type: "download", name: "XXMix_9realistic_v3.0.safetensors" };
+    const data = { id: "XXMix_9realistic_v4.0.safetensors", type: "download", name: "XXMix_9realistic_v4.0.safetensors" };
     callback(data);
     await aria2c.download(
-      "https://down.liblibai.com/web/model/2030eae609c583da58d698261dfc9b504b143a32892b252e9841577f464df4fb.safetensors",
-      { dir, out: "XXMix_9realistic_v3.0.safetensors" },
+      "https://liblibai-online.liblibai.com/web/model/18ed2b6c48fda400330e5dec9e6f4d714ef664869ea8d4021f12ba699b31da06.safetensors",
+      { dir, out: "XXMix_9realistic_v4.0.safetensors" },
       (res) => {
         data.data = res;
         callback(data);

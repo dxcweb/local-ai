@@ -31,6 +31,12 @@ https://user-images.githubusercontent.com/21973553/244636422-5c741b97-6fd8-436a-
 
 ![localai.png](https://b3logfile.com/file/2023/06/local-ai-49qgYMz.png)
 
+## ChatGLM2-6B
+
+清华大学开源中英双语对话模型，排名第一中文大语音模型
+
+![ChatGLM2.png](https://b3logfile.com/file/2023/06/glm2-I0Xk4NH.png)
+
 ## 给我买杯咖啡
 
 嗨，如果你觉得我的项目有用，请考虑给我买杯咖啡来支持我的工作。谢谢

@@ -8,6 +8,7 @@ const rembg = require("./Rembg");
 const { readdir, stat, readFile, writeFile } = require("fs/promises");
 const { homedir } = require("os");
 const { existsSync } = require("fs");
+const chatGLM2 = require("./ChatGLM2");
 
 const onListener = (eventName, task) => {
   ipcMain.on(eventName, async (event, params) => {
@@ -69,15 +70,6 @@ const service = (mainWindow) => {
   });
 
   ipcMain.on("close", () => app.quit());
-  // 在应用程序退出之前执行
-  app.on("before-quit", async (event) => {
-    event.preventDefault();
-    await lamaCleaner.close();
-    await stableDiffusion.close();
-    await sadTalker.close();
-    await rembg.close();
-    app.exit();
-  });
 
   ipcMain.on("stop-lama-cleaner", (event) => {
     lamaCleaner.close();
@@ -163,6 +155,20 @@ const service = (mainWindow) => {
     } else {
       return null;
     }
+  });
+  onListener("ChatGLM2", chatGLM2.start);
+  ipcMain.handle("ChatGLM2Run", async (event, quantize) => {
+    return await chatGLM2.runWebUi(quantize);
+  });
+  // 在应用程序退出之前执行
+  app.on("before-quit", async (event) => {
+    event.preventDefault();
+    await lamaCleaner.close();
+    await stableDiffusion.close();
+    await sadTalker.close();
+    await rembg.close();
+    await chatGLM2.close();
+    app.exit();
   });
 };
 

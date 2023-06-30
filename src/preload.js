@@ -87,5 +87,7 @@ contextBridge.exposeInMainWorld("electronAPI", {
   startStableDiffusion: onListener("stable-diffusion"),
   SadTalker: onListener("SadTalker"),
   Rembg: onListener("Rembg"),
+  ChatGLM2: onListener("ChatGLM2"),
   handleRembg: onListenerHandle("handleRembg"),
+  ChatGLM2Run: (quantize) => ipcRenderer.invoke("ChatGLM2Run", quantize),
 });

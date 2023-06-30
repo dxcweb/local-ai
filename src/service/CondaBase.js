@@ -191,7 +191,7 @@ class CondaBase {
     if (typeof packages === "string") packages = [packages];
 
     if (image === "aliyun") {
-      process.env.PIP_INDEX_URL = "http://mirrors.aliyun.com/pypi/simple/";
+      process.env.PIP_INDEX_URL = "https://mirrors.aliyun.com/pypi/simple/";
     } else if (image === "huawei") {
       process.env.PIP_INDEX_URL = "https://repo.huaweicloud.com/repository/pypi/simple/";
     } else {
